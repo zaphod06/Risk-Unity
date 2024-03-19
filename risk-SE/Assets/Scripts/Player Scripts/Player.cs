@@ -9,12 +9,12 @@ public class Player : MonoBehaviour
     public MissionCards mission;
     public Cards[] cards;
     public string colour;
-    public int number;
     public int turn;
     public Dice_d6_Plastic Dice;
     public Deck deck;
     public Troops[] troops;
     // Start is called before the first frame update
+    
     void Start()
     {
         
