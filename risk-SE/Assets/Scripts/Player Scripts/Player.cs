@@ -28,11 +28,11 @@ public class Player : MonoBehaviour
 
     public void assignTurn(int turn)
     {
-        this.turn = turn;
+        TurnNumber = turn;
     }
 
     public int getTurn()
     {
-        return turn;
+        return TurnNumber;
     }
 }
