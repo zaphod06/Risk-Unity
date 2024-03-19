@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     public MissionCards mission;
     public Cards[] cards;
     public string colour;
-    public int turn;
+    public int TurnNumber;
     public Dice_d6_Plastic Dice;
     public Deck deck;
     public Troops[] troops;
@@ -24,5 +24,15 @@ public class Player : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void assignTurn(int turn)
+    {
+        this.turn = turn;
+    }
+
+    public int getTurn()
+    {
+        return turn;
     }
 }

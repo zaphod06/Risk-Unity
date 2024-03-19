@@ -9,6 +9,7 @@ public class PlayerCreator : MonoBehaviour
     public static PlayerCreator instance;
     private PlayerAmount playerAmount;
     public GameObject playerPrefab;
+    public int turn = 0;
     public int amount;
 
     private void Awake()
@@ -32,10 +33,12 @@ public class PlayerCreator : MonoBehaviour
     {
         GameObject playerObject = Instantiate(playerPrefab);
         Player player = playerObject.GetComponent<Player>();
+        player.assignTurn(turn);
+        turn++;
         return player;
     }
 
-    public List<Player> createPlayers()
+    /*public List<Player> createPlayers()
     {
         //Create new list of players
 
@@ -49,7 +52,7 @@ public class PlayerCreator : MonoBehaviour
         }
 
         return players;
-    }
+    }*/
 
     public int getAmount()
     {
