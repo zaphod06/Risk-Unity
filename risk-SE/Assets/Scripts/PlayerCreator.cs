@@ -12,12 +12,12 @@ public class PlayerCreator : MonoBehaviour
     public int turn = 0;
     public int amount;
 
-    private void Awake()
+  /*  private void Awake()
     {
         instance = this;
         playerAmount = (PlayerAmount)FindObjectOfType(typeof(PlayerAmount));
         amount = playerAmount.amount;
-    }
+    } */
     void Start()
     {
         

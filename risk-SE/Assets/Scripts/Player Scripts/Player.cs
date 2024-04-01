@@ -13,6 +13,8 @@ public class Player : MonoBehaviour
     public Dice_d6_Plastic Dice;
     public Deck deck;
     public Troops[] troops;
+    
+
     // Start is called before the first frame update
     
     void Start()
