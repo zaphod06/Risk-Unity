@@ -3,56 +3,70 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using static UnityEditor.Experimental.GraphView.GraphView;
+using UnityEngine.UI;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
     // Start is called before the first frame update
-    public List<Player> Players = new List<Player>();
-    public PlayerCreator playerCreator;
-    private int currentTurnIndex = 1;
+    /*   public List<Player> Players = new List<Player>();
+       public PlayerCreator playerCreator;
+       private int currentTurnIndex = 1; */
+
 
     public List<Card> deck = new List<Card>();
-    public bool[] availableCardSlots;
-
+    public bool[] freeCardSpaces;
     
+    public Canvas canvas;
+    public RectTransform[] cardSpaces;
 
- /*  public void DrawCard()
+
+    public void DrawCard()
     {
         if (deck.Count >= 1)
         {
             int randomIndex = Random.Range(0, deck.Count);
             Card randomCard = deck[randomIndex];
-            for (int i = 0; i < availableCardSlots.Length; i++)
+            for (int i = 0; i < freeCardSpaces.Length; i++)
             {
-                if (availableCardSlots[i] == true)
+                if (freeCardSpaces[i] == true)
                 {
-                   randomCard.gameObject.SetActive(true);
-                   randomCard.transform.position = cardSlots[i].position;
-                    availableCardSlots[i] = false;
+                    GameObject cardGO = Instantiate(randomCard.associatedGameObject, canvas.transform);
+                    cardGO.name = randomCard.TerritoryName;
+                  
+                    RectTransform cardRectTransform = cardGO.GetComponent<RectTransform>();
+                    cardRectTransform.anchoredPosition = cardSpaces[i].anchoredPosition;
+
+                    freeCardSpaces[i] = false;
                     deck.Remove(randomCard);
+
                     return;
                 }
             }
         }
     }
-*/
+
+
 
     private void Awake()
     {
-        
+
     }
     void Start()
     {
-        CreatePlayers(playerCreator);
-        StartGame();
+        /* CreatePlayers(playerCreator);
+         StartGame();*/
+        deck.AddRange(CardData.cardList);
     }
-
+}
+/*
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
+}
     private void CreatePlayers(PlayerCreator playerCreator)
     {
         if (playerCreator != null)
@@ -93,6 +107,6 @@ public class GameManager : MonoBehaviour
     }
 
      
-}
+} */
 
 

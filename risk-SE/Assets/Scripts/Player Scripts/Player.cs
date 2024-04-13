@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     public Deck deck;
     public Troops[] troops;
     
+    
 
     // Start is called before the first frame update
     
