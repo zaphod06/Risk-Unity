@@ -9,8 +9,10 @@ public class CardData : MonoBehaviour
     public static List<Card> cardList = new List<Card>();
     public static List<GameObject> cardGameObjects = new List<GameObject>();
     public GameObject cardPrefab;
-    
-    void Start()
+
+ 
+
+    void Awake()
     {
         
         List<string> territoryNames = new List<string> { "East Africa", "Venezuala", "Brazil", "Greenland", "Iceland", "Kamchatka", "Peru","Eastern Canada", "Middle East", "New Guinea", "South Africa", "Madagascar", "Western United States", "Scandinavia", "Alberta", "North West", "Great Britain", "Eastern United States", "Central America", "Northern Europe", "Western Europe", "Southern Europe", "North Africa", "Siberia", "Mongolia", "Japan", "Ural", "South East Asia", "Afghanistan", "Indonesia", "Irkutsk", "Eastern Australia", "Western Australia", "Russia", "Ontario", "Argentina", "Ukraine", "Siam", "Quebec", "Congo"};

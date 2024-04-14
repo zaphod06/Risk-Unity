@@ -54,10 +54,11 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
-        //Create the Players
-        CreatePlayers(playerCreator);
-        StartGame();
+        //Initialise the deck
         deck.AddRange(CardData.cardList);
+        //Set up game
+        SetUpGame(playerCreator);
+        
     }
 
 
@@ -85,8 +86,66 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        
         ExecuteTurn(Players[currentTurnIndex]);
     } 
+
+    public void SetUpGame(PlayerCreator playerCreator)
+    {
+        // Create players
+        CreatePlayers(playerCreator);
+
+        // Distribute territories
+        DistributeTerritories();
+
+        // Place initial armies
+        PlaceInitialArmies();
+
+        // Start the game
+        StartGame();
+    }
+
+    //Method to distribute territories to each player on set up
+    private void DistributeTerritories()
+    {
+
+        int deckLength = deck.Count ;
+
+        for (int i = 0; i < deckLength; i++)
+        {
+            foreach (Player player in Players)
+            {
+                if (deck.Count > 0)
+                {
+                    int randomIndex = Random.Range(0, deck.Count);
+                    Card randomCard = deck[randomIndex];
+                    player.AddTerritory(randomCard.TerritoryName);
+                    deck.RemoveAt(randomIndex);
+                }
+                else
+                {
+                    Debug.LogError("Not enough territories to distribute.");
+                    
+                    return;
+                }
+            }
+        }
+        
+    }
+
+    private void PlaceInitialArmies()
+    {
+        int initialArmiesPerPlayer = 3; 
+
+        foreach (Player player in Players)
+        {
+            for (int i = 0; i < initialArmiesPerPlayer; i++)
+            {
+                // Assuming each player has only one territory for now
+                player.PlaceArmy(player.Territories[0]);
+            }
+        }
+    }
 
     public void ExecuteTurn(Player currentPlayer)
     {

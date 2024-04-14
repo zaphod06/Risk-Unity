@@ -33,7 +33,7 @@ public class PlayerCreator : MonoBehaviour
     {
         GameObject playerObject = Instantiate(playerPrefab);
         Player player = playerObject.GetComponent<Player>();
-        player.assignTurn(turn);
+        player.AssignTurn(turn);
         turn++;
         return player;
     }
