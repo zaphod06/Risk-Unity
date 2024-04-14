@@ -9,9 +9,9 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     // Start is called before the first frame update
-    /*   public List<Player> Players = new List<Player>();
-       public PlayerCreator playerCreator;
-       private int currentTurnIndex = 1; */
+    public List<Player> Players = new List<Player>();
+    public PlayerCreator playerCreator;
+    private int currentTurnIndex = 1; 
 
 
     public List<Card> deck = new List<Card>();
@@ -54,19 +54,20 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
-        /* CreatePlayers(playerCreator);
-         StartGame();*/
+        //Create the Players
+        CreatePlayers(playerCreator);
+        StartGame();
         deck.AddRange(CardData.cardList);
     }
-}
-/*
+
+
     // Update is called once per frame
     void Update()
     {
 
     }
 
-}
+    //Method to create Players
     private void CreatePlayers(PlayerCreator playerCreator)
     {
         if (playerCreator != null)
@@ -107,6 +108,6 @@ public class GameManager : MonoBehaviour
     }
 
      
-} */
+} 
 
 

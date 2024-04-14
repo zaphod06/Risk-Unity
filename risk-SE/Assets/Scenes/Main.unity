@@ -959,8 +959,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fee514abe86a624389a05844086d6c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Players: []
+  playerCreator: {fileID: 503098208}
   deck: []
   freeCardSpaces: 010101
+  canvas: {fileID: 0}
   cardSpaces:
   - {fileID: 1333840118}
   - {fileID: 1108324401}
@@ -2688,8 +2691,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fee514abe86a624389a05844086d6c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Players: []
+  playerCreator: {fileID: 0}
   deck: []
   freeCardSpaces: 010101
+  canvas: {fileID: 0}
   cardSpaces:
   - {fileID: 1333840118}
   - {fileID: 1108324401}

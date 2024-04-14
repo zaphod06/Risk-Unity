@@ -12,12 +12,12 @@ public class PlayerCreator : MonoBehaviour
     public int turn = 0;
     public int amount;
 
-  /*  private void Awake()
+    private void Awake()
     {
         instance = this;
         playerAmount = (PlayerAmount)FindObjectOfType(typeof(PlayerAmount));
         amount = playerAmount.amount;
-    } */
+    } 
     void Start()
     {
         
@@ -38,7 +38,7 @@ public class PlayerCreator : MonoBehaviour
         return player;
     }
 
-    /*public List<Player> createPlayers()
+    public List<Player> createPlayers()
     {
         //Create new list of players
 
@@ -52,7 +52,7 @@ public class PlayerCreator : MonoBehaviour
         }
 
         return players;
-    }*/
+    }
 
     public int getAmount()
     {
