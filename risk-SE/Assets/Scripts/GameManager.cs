@@ -5,6 +5,8 @@ using UnityEngine;
 using static UnityEditor.Experimental.GraphView.GraphView;
 using UnityEngine.UI;
 using TMPro;
+using Unity.PlasticSCM.Editor.WebApi;
+using System.Numerics;
 
 public class GameManager : MonoBehaviour
 {
@@ -23,10 +25,6 @@ public class GameManager : MonoBehaviour
     
     public Canvas canvas;
     public RectTransform[] cardSpaces;
-
-    public Button AlaskaButton;
-
-    
 
 
     public void DrawCard()
@@ -89,7 +87,7 @@ public class GameManager : MonoBehaviour
                 Players.Add(playerCreator.createPlayer());
             }
         }
-        else
+        else 
         {
             Debug.LogError("PlayerCreator instance is null. Players cannot be created.");
         }
@@ -106,67 +104,13 @@ public class GameManager : MonoBehaviour
         // Create players
         CreatePlayers(playerCreator);
 
-        // Distribute territories
-        DistributeTerritories();
 
-        // Place initial armies
-        PlaceInitialArmies();
 
         // Start the game
         StartGame();
     }
 
-    //Method to distribute territories to each player on set up
-    private void DistributeTerritories()
-    {
 
-        /*int deckLength = deck.Count ;
-
-        for (int i = 0; i < deckLength; i++)
-        {
-            foreach (Player player in Players)
-            {
-                if (deck.Count > 0)
-                {
-                    int randomIndex = Random.Range(0, deck.Count);
-                    Card randomCard = deck[randomIndex];
-                    
-                    player.AddTerritory(randomCard.TerritoryName);
-                    deck.RemoveAt(randomIndex);
-                }
-                else
-                {
-                    Debug.LogError("Not enough territories to distribute.");
-                    
-                    return;
-                }
-            }
-        }*/
-
-        /*int territoriesLength = territories.Count ;
-
-        for (int i = 0; i < territoriesLength; i++)
-        {
-            foreach (Player player in Players)
-            {
-                if (territories.Count > 0)
-                {
-                    int randomIndex = Random.Range(0, territories.Count);
-                    Territory randomTerr = territories[randomIndex];
-                    
-                    player.AddTerritory(randomTerr);
-                    territories.RemoveAt(randomIndex);
-                }
-                else
-                {
-                    Debug.LogError("Not enough territories to distribute.");
-                    
-                    return;
-                }
-            }
-        }*/
-
-    }
 
     void EnableTerritoryButtonsForPlayer(Player player)
     {
@@ -174,7 +118,7 @@ public class GameManager : MonoBehaviour
         {
             // Enable buttons for territories that do not belong to any player
             // and where the player has adjacent territories
-            if (territory.player == null && HasAdjacentTerritoryOwnedByPlayer(territory, player))
+            if (territory.Player == null && HasAdjacentTerritoryOwnedByPlayer(territory, player))
             {
                 // Enable buttons for this territory
                 Button territoryButton = territory.GetComponent<Button>();
@@ -189,38 +133,56 @@ public class GameManager : MonoBehaviour
 
     public void AssignPlayerToTerritory(Territory territory)
     {
-        if(territory.player == null)
+        if(territory.Player == null)
         {
             Player player = Players[currentTurnIndex];
             territory.AssignPlayer(player);
             // Implement logic to place troops on the territory
             Debug.Log(player.TurnNumber + " has been assigned to " + territory.Name);
             player.AddTerritory(territory);
+            territory.PlaceInfantry();
             EndTurn();
+        }
+        else if (AllTerritoriesOwned() == true)
+        {
+            
+            PlaceInfantry(territory);
+        }
+        else
+        {
+            
+            foreach (Territory terr in territories)
+            {
+                if(terr.Player == null){
+                    Debug.Log(terr.name + " still must be claimed");
+                }
+            }
+            
         }
         
         
     }
 
-    private void PlaceInitialArmies()
+    public void PlaceInfantry(Territory Terr)
     {
-        int initialArmiesPerPlayer = 3; 
-
-        foreach (Player player in Players)
-        {
-            for (int i = 0; i < initialArmiesPerPlayer; i++)
-            {
-                // Assuming each player has only one territory for now
-                player.PlaceArmy(player.Territories[0]);
-            }
+        Player player = Players[currentTurnIndex];
+        if (Terr.Player == player) {
+            Terr.PlaceInfantry();
+            Debug.Log("Player " + player.TurnNumber + " Placing army on territory: " + Terr.Name);
+            EndTurn();
         }
+        else
+        {
+            Debug.Log("Player " + player.TurnNumber + "Does not own " + Terr.Name);
+        }
+        
     }
 
     bool HasAdjacentTerritoryOwnedByPlayer(Territory territory, Player player)
     {
         foreach (Territory adjacentTerritory in territory.AdjacentTerritories)
         {
-            if (adjacentTerritory.player == player)
+            if (adjacentTerritory.Player == player)
             {
                 return true;
             }
@@ -250,7 +212,70 @@ public class GameManager : MonoBehaviour
 
     }
 
-     
-} 
+    public bool AllTerritoriesOwned()
+    {
+        foreach (Territory territory in territories)
+        {
+            if (territory.Player == null)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+}
+
+//Method to distribute territories to each player on set up
+/*private void DistributeTerritories()
+{
+
+    int deckLength = deck.Count ;
+
+    for (int i = 0; i < deckLength; i++)
+    {
+        foreach (Player player in Players)
+        {
+            if (deck.Count > 0)
+            {
+                int randomIndex = Random.Range(0, deck.Count);
+                Card randomCard = deck[randomIndex];
+
+                player.AddTerritory(randomCard.TerritoryName);
+                deck.RemoveAt(randomIndex);
+            }
+            else
+            {
+                Debug.LogError("Not enough territories to distribute.");
+
+                return;
+            }
+        }
+    }*/
+
+/*int territoriesLength = territories.Count ;
+
+for (int i = 0; i < territoriesLength; i++)
+{
+    foreach (Player player in Players)
+    {
+        if (territories.Count > 0)
+        {
+            int randomIndex = Random.Range(0, territories.Count);
+            Territory randomTerr = territories[randomIndex];
+
+            player.AddTerritory(randomTerr);
+            territories.RemoveAt(randomIndex);
+        }
+        else
+        {
+            Debug.LogError("Not enough territories to distribute.");
+
+            return;
+        }
+    }
+}
+
+}*/
 
 

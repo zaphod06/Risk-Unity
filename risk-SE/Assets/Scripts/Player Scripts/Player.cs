@@ -10,14 +10,15 @@ public class Player : MonoBehaviour
     public Cards[] cards;
     public string colour;
     public int TurnNumber;
-    public Dice_d6_Plastic Dice;
-    public Deck deck;
-    public Troops[] troops;
-    
-    
+
+    public int Infantry = 0;
+    public int Cavalry = 0;
+    public int Artillery = 0;
+
+
 
     // Start is called before the first frame update
-    
+
     void Start()
     {
         
@@ -41,7 +42,8 @@ public class Player : MonoBehaviour
         // Check if the player owns the territory
         if (Territories.Contains(territory))
         {
-            //NEED TO FINSIH
+            territory.PlaceInfantry();
+            Infantry--;
             Debug.Log("Placing army on territory: " + territory.Name);
         }
         else
@@ -58,5 +60,10 @@ public class Player : MonoBehaviour
     public int GetTurn()
     {
         return TurnNumber;
+    }
+
+    public void AssignInfantry(int InfantryNo)
+    {
+        Infantry = InfantryNo;
     }
 }

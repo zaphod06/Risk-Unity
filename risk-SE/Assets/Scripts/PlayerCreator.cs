@@ -37,7 +37,25 @@ public class PlayerCreator : MonoBehaviour
         GameObject playerObject = Instantiate(playerPrefab);
         Player player = playerObject.GetComponent<Player>();
         player.AssignTurn(turn);
+        
+        if (amount == 3)
+        {
+            player.AssignInfantry(35);
+        }
+        else if (amount == 4)
+        {
+            player.AssignInfantry(30);
+        }
+        else if (amount == 5)
+        {
+            player.AssignInfantry(25);
+        }
+        else if (amount == 6)
+        {
+            player.AssignInfantry(20);
+        }
         turn++;
+        
         return player;
     }
 

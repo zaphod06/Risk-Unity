@@ -5,8 +5,12 @@ using UnityEngine;
 public class Territory : MonoBehaviour
 {
     public string Name;
-    public Player player;
+    public Player Player;
     public List<Territory> AdjacentTerritories;
+
+    public int Infantry = 0;
+    public int Cavalry = 0;
+    public int Artillery = 0;
 
     void Start()
     {
@@ -25,6 +29,12 @@ public class Territory : MonoBehaviour
 
     public void AssignPlayer(Player NewPlayer)
     {
-        player = NewPlayer;
+        Player = NewPlayer;
+    }
+
+    public void PlaceInfantry()
+    {
+        Infantry++;
+        Player.Infantry--;
     }
 }
