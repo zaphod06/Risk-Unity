@@ -11,14 +11,22 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     public List<Player> Players = new List<Player>();
     public PlayerCreator playerCreator;
-    private int currentTurnIndex = 1; 
+    private int currentTurnIndex = 0;
 
+    public dice Dice;
+
+    public TerritoryCreator territoryCreator;
+    public List<Territory> territories = new List<Territory>();
 
     public List<Card> deck = new List<Card>();
     public bool[] freeCardSpaces;
     
     public Canvas canvas;
     public RectTransform[] cardSpaces;
+
+    public Button AlaskaButton;
+
+    
 
 
     public void DrawCard()
@@ -54,6 +62,9 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
+        territories.AddRange(FindObjectsOfType<Territory>());
+        //Initialise territories 
+        //territories = territoryCreator.createTerriotries();
         //Initialise the deck
         deck.AddRange(CardData.cardList);
         //Set up game
@@ -109,7 +120,7 @@ public class GameManager : MonoBehaviour
     private void DistributeTerritories()
     {
 
-        int deckLength = deck.Count ;
+        /*int deckLength = deck.Count ;
 
         for (int i = 0; i < deckLength; i++)
         {
@@ -119,6 +130,7 @@ public class GameManager : MonoBehaviour
                 {
                     int randomIndex = Random.Range(0, deck.Count);
                     Card randomCard = deck[randomIndex];
+                    
                     player.AddTerritory(randomCard.TerritoryName);
                     deck.RemoveAt(randomIndex);
                 }
@@ -129,7 +141,64 @@ public class GameManager : MonoBehaviour
                     return;
                 }
             }
+        }*/
+
+        /*int territoriesLength = territories.Count ;
+
+        for (int i = 0; i < territoriesLength; i++)
+        {
+            foreach (Player player in Players)
+            {
+                if (territories.Count > 0)
+                {
+                    int randomIndex = Random.Range(0, territories.Count);
+                    Territory randomTerr = territories[randomIndex];
+                    
+                    player.AddTerritory(randomTerr);
+                    territories.RemoveAt(randomIndex);
+                }
+                else
+                {
+                    Debug.LogError("Not enough territories to distribute.");
+                    
+                    return;
+                }
+            }
+        }*/
+
+    }
+
+    void EnableTerritoryButtonsForPlayer(Player player)
+    {
+        foreach (Territory territory in territories)
+        {
+            // Enable buttons for territories that do not belong to any player
+            // and where the player has adjacent territories
+            if (territory.player == null && HasAdjacentTerritoryOwnedByPlayer(territory, player))
+            {
+                // Enable buttons for this territory
+                Button territoryButton = territory.GetComponent<Button>();
+                territoryButton.interactable = true;
+
+                // Add an onClick event listener to the button
+                territoryButton.onClick.RemoveAllListeners(); // Remove existing listeners to prevent duplicate calls
+                territoryButton.onClick.AddListener(() => AssignPlayerToTerritory(territory));
+            }
         }
+    }
+
+    public void AssignPlayerToTerritory(Territory territory)
+    {
+        if(territory.player == null)
+        {
+            Player player = Players[currentTurnIndex];
+            territory.AssignPlayer(player);
+            // Implement logic to place troops on the territory
+            Debug.Log(player.TurnNumber + " has been assigned to " + territory.Name);
+            player.AddTerritory(territory);
+            EndTurn();
+        }
+        
         
     }
 
@@ -147,14 +216,29 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    bool HasAdjacentTerritoryOwnedByPlayer(Territory territory, Player player)
+    {
+        foreach (Territory adjacentTerritory in territory.AdjacentTerritories)
+        {
+            if (adjacentTerritory.player == player)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+
     public void ExecuteTurn(Player currentPlayer)
     {
         Debug.Log("Player " + currentPlayer.TurnNumber + "'s turn.");
         //Put in turn actions later
-            
-        //
 
-        EndTurn();
+        // Allow the current player to assign armies to territories
+        // For example, you can enable buttons for the territories the player can assign armies to
+        //EnableTerritoryButtonsForPlayer(currentPlayer);
+
+        //EndTurn();
     }
 
     public void EndTurn()

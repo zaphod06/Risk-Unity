@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public List<string> Territories = new List<string>();
+    public List<Territory> Territories = new List<Territory>();
     public int noTroops;
     public MissionCards mission;
     public Cards[] cards;
@@ -29,24 +29,24 @@ public class Player : MonoBehaviour
         
     }
 
-    // Method to add a territory to the player's list of territories
-    public void AddTerritory(string territoryName)
+    // Method to add a territory to the player's list of territories  
+    public void AddTerritory(Territory territory)
     {
-        Territories.Add(territoryName);
+        Territories.Add(territory);
     }
 
     // Method to place an army on a territory owned by the player
-    public void PlaceArmy(string territoryName)
+    public void PlaceArmy(Territory territory)
     {
         // Check if the player owns the territory
-        if (Territories.Contains(territoryName))
+        if (Territories.Contains(territory))
         {
             //NEED TO FINSIH
-            Debug.Log("Placing army on territory: " + territoryName);
+            Debug.Log("Placing army on territory: " + territory.Name);
         }
         else
         {
-            Debug.LogWarning("Player does not own territory: " + territoryName);
+            Debug.LogWarning("Player does not own territory: " + territory.Name);
         }
     }
 

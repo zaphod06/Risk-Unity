@@ -7,16 +7,19 @@ public class PlayerCreator : MonoBehaviour
 {
     // Start is called before the first frame update
     public static PlayerCreator instance;
-    private PlayerAmount playerAmount;
+    //private PlayerAmount playerAmount;
+    
     public GameObject playerPrefab;
     public int turn = 0;
     public int amount;
+    public MainMenu mainMenu;
 
     private void Awake()
     {
         instance = this;
-        playerAmount = (PlayerAmount)FindObjectOfType(typeof(PlayerAmount));
-        amount = playerAmount.amount;
+        //playerAmount = (PlayerAmount)FindObjectOfType(typeof(PlayerAmount));
+        
+        amount = mainMenu.getPlayerAmount();
     } 
     void Start()
     {
