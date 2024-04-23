@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using TMPro;
 using Unity.PlasticSCM.Editor.WebApi;
 using System.Numerics;
+using UnityEditor.Experimental.GraphView;
 
 public class GameManager : MonoBehaviour
 {
@@ -143,10 +144,14 @@ public class GameManager : MonoBehaviour
             territory.PlaceInfantry();
             EndTurn();
         }
-        else if (AllTerritoriesOwned() == true)
+        else if (AllTerritoriesOwned() == true && AllTroopsPlaced() == false)
         {
             
             PlaceInfantry(territory);
+        }
+        else if (AllTroopsPlaced() == true)
+        {
+            Debug.Log("Player "+ currentTurnIndex + " attacking " + territory.name);
         }
         else
         {
@@ -160,6 +165,11 @@ public class GameManager : MonoBehaviour
             
         }
         
+        
+    }
+
+    public void Attack(Territory Terr)
+    {
         
     }
 
@@ -217,6 +227,18 @@ public class GameManager : MonoBehaviour
         foreach (Territory territory in territories)
         {
             if (territory.Player == null)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public bool AllTroopsPlaced()
+    {
+        foreach (Player player in Players)
+        {
+            if (player.Infantry > 0)
             {
                 return false;
             }

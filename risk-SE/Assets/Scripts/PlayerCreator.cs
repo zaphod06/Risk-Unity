@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerCreator : MonoBehaviour
 {
     // Start is called before the first frame update
-    public static PlayerCreator instance;
+    public PlayerCreator instance;
     //private PlayerAmount playerAmount;
     
     public GameObject playerPrefab;

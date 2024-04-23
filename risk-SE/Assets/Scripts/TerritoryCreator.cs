@@ -13,7 +13,7 @@ public class TerritoryCreator : MonoBehaviour
     }
 
     // Update is called once per frame
-   /* public List<Territory> createTerriotries()
+  /* public List<Territory> createTerriotries()
     {
         // Create territories
         territories.Clear();

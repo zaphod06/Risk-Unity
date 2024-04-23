@@ -337,8 +337,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: 
-  player: {fileID: 0}
+  Player: {fileID: 0}
   AdjacentTerritories: []
+  Infantry: 0
+  Cavalry: 0
+  Artillery: 0
 --- !u!114 &19184933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1095,6 +1098,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &150863693
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1108,8 +1123,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: 
-  player: {fileID: 0}
+  Player: {fileID: 0}
   AdjacentTerritories: []
+  Infantry: 0
+  Cavalry: 0
+  Artillery: 0
 --- !u!1 &211573989
 GameObject:
   m_ObjectHideFlags: 0
@@ -1743,7 +1761,6 @@ MonoBehaviour:
   - {fileID: 1333840118}
   - {fileID: 1108324401}
   - {fileID: 219307195}
-  AlaskaButton: {fileID: 0}
 --- !u!4 &457514766
 Transform:
   m_ObjectHideFlags: 0
@@ -2895,8 +2912,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: 
-  player: {fileID: 0}
+  Player: {fileID: 0}
   AdjacentTerritories: []
+  Infantry: 0
+  Cavalry: 0
+  Artillery: 0
 --- !u!114 &872000597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3622,8 +3642,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: 
-  player: {fileID: 0}
+  Player: {fileID: 0}
   AdjacentTerritories: []
+  Infantry: 0
+  Cavalry: 0
+  Artillery: 0
 --- !u!54 &1040650220
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4701,8 +4724,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: 
-  player: {fileID: 0}
+  Player: {fileID: 0}
   AdjacentTerritories: []
+  Infantry: 0
+  Cavalry: 0
+  Artillery: 0
 --- !u!114 &1453572139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5109,7 +5135,6 @@ MonoBehaviour:
   - {fileID: 1333840118}
   - {fileID: 1108324401}
   - {fileID: 219307195}
-  AlaskaButton: {fileID: 0}
 --- !u!114 &1625828302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6371,8 +6396,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: 
-  player: {fileID: 0}
+  Player: {fileID: 0}
   AdjacentTerritories: []
+  Infantry: 0
+  Cavalry: 0
+  Artillery: 0
 --- !u!114 &1965656852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6685,8 +6713,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: 
-  player: {fileID: 0}
+  Player: {fileID: 0}
   AdjacentTerritories: []
+  Infantry: 0
+  Cavalry: 0
+  Artillery: 0
 --- !u!114 &2094224649
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6752,7 +6783,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2120543729}
-  - component: {fileID: 2120543728}
   m_Layer: 0
   m_Name: 'Territories '
   m_TagString: Untagged
@@ -6760,21 +6790,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &2120543728
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2120543727}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 000547a7b0aa89e43b963bd69ae4c4c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Name: 
-  player: {fileID: 0}
-  AdjacentTerritories: []
 --- !u!4 &2120543729
 Transform:
   m_ObjectHideFlags: 0

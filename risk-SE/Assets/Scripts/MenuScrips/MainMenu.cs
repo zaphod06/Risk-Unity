@@ -6,16 +6,35 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
     public string input;
-    /*public void PlayGame()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    public GameObject Board;
+    public GameObject Territories;
 
-    }*/
+    public GameObject PlayerCreator;
+    public GameObject GameManager;
+    public GameObject PlayerSelect;
+    public void PlayGame()
+    {
+        if (getPlayerAmount() > 0)
+        {
+            //Activate each component of the game
+            Board.SetActive(true);
+            Territories.SetActive(true);
+            PlayerCreator.SetActive(true);
+            GameManager.SetActive(true);
+            //Deactivate player creator menu
+            PlayerSelect.SetActive(false);
+            Debug.Log("There are " + input.ToString() + " Players");
+        }
+        else
+        {
+            Debug.Log("Must have between 1 to 6 players");
+        }
+    }
 
     public void ReadStringInput(string s)
     {
         input = s;
-        Debug.Log(input);
+        
     }
 
     public int getPlayerAmount()
