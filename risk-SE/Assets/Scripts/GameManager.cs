@@ -8,19 +8,24 @@ using TMPro;
 using Unity.PlasticSCM.Editor.WebApi;
 using System.Numerics;
 using UnityEditor.Experimental.GraphView;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+    // Player variables
     public List<Player> Players = new List<Player>();
     public PlayerCreator playerCreator;
+    
     private int currentTurnIndex = 0;
 
     public dice Dice;
 
+    //Territory variables
     public TerritoryCreator territoryCreator;
     public List<Territory> territories = new List<Territory>();
 
+    //Card variables
     public List<Card> deck = new List<Card>();
     public bool[] freeCardSpaces;
     
@@ -29,7 +34,17 @@ public class GameManager : MonoBehaviour
 
     private bool Setup = false;
 
+    //Variable ditactiating what phase the game is in
+    public bool troopPlacingPhase = false;
+    public bool battlePhase = false;
 
+    //Variables used for battle mechanics
+    public int troopsAttacking;
+    public int troopsDefending;
+    public GameObject attackerPrompt;
+    public GameObject defenderPrompt;
+    //Stores last two selected territories to know what territory is attacking and defending
+    private Territory[] lastSelectedTerritories = new Territory[2];
     
 
 
@@ -40,9 +55,9 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
+        //Initilise territories 
         territories.AddRange(FindObjectsOfType<Territory>());
-        //Initialise territories 
-        //territories = territoryCreator.createTerriotries();
+        
         //Initialise the deck
         deck.AddRange(CardData.cardList);
         //Set up game
@@ -73,11 +88,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void StartGame()
-    {
-        Debug.Log("Player " + Players[currentTurnIndex].TurnNumber + "'s turn.");
-        ExecuteTurn(Players[currentTurnIndex]);
-    } 
+    
 
     public void SetUpGame(PlayerCreator playerCreator)
     {
@@ -89,27 +100,14 @@ public class GameManager : MonoBehaviour
         // Start the game
         StartGame();
     }
-
-
-
-    void EnableTerritoryButtonsForPlayer(Player player)
+    public void StartGame()
     {
-        foreach (Territory territory in territories)
-        {
-            // Enable buttons for territories that do not belong to any player
-            // and where the player has adjacent territories
-            if (territory.Player == null && HasAdjacentTerritoryOwnedByPlayer(territory, player))
-            {
-                // Enable buttons for this territory
-                Button territoryButton = territory.GetComponent<Button>();
-                territoryButton.interactable = true;
-
-                // Add an onClick event listener to the button
-                territoryButton.onClick.RemoveAllListeners(); // Remove existing listeners to prevent duplicate calls
-                territoryButton.onClick.AddListener(() => AssignPlayerToTerritory(territory));
-            }
-        }
+        Debug.Log("Player " + Players[currentTurnIndex].TurnNumber + "'s turn.");
+        ExecuteTurn(Players[currentTurnIndex]);
     }
+
+
+
 
     public void AssignPlayerToTerritory(Territory territory)
     {
@@ -148,10 +146,6 @@ public class GameManager : MonoBehaviour
         
     }
 
-    public void Attack(Territory Terr)
-    {
-        
-    }
 
     public void SetUpInfantry(Territory Terr)
     {
@@ -181,29 +175,24 @@ public class GameManager : MonoBehaviour
     }
     
 
-    public void ExecuteTurn(Player currentPlayer)
-    {
-        
-        if(currentPlayer.Infantry == 0)
-        {
-            int amount = currentPlayer.Territories.Count / 3;
-            Setup = true;
-           
-            currentPlayer.GiveInfantry(amount);
-            Debug.Log("Player " + currentPlayer.TurnNumber + " has been given " + amount + " infantry.");
-            
-        }
-    }
+
 
     public void PlaceInfantry(Territory Terr)
     {
         Player player = Players[currentTurnIndex];
-        if(Setup == true)
+        if(Setup == true && troopPlacingPhase == true)
         {
             if (Terr.Player == player && player.Infantry > 0)
             {
                 Terr.PlaceInfantry();
                 Debug.Log("Player " + player.TurnNumber + " Placing army on territory: " + Terr.Name);
+                //check if player is ready to move onto attacking phase of their turn
+                if (player.Infantry == 0)
+                {
+                    troopPlacingPhase = false;
+                    battlePhase=true;
+                    Debug.Log("Player may now attack");
+                }
                 
             }
             else if(player.Infantry == 0)
@@ -212,14 +201,36 @@ public class GameManager : MonoBehaviour
                 
                 
             }
-            else
+            else if(player.Infantry > 0 && Terr.Player != player)
             {
-                Debug.Log("Player " + player.TurnNumber + "Does not own " + Terr.Name);
+                Debug.Log("Player " + player.TurnNumber + " Does not own " + Terr.Name);
             }
         }
    
     }
 
+    public void ExecuteTurn(Player currentPlayer)
+    {
+        
+        
+        //Player given Infantry at start of their turn
+        if (currentPlayer.Infantry == 0)
+        {
+            //Calcukate how much infantry a player will receive
+            battlePhase = false;
+            troopPlacingPhase = true;
+            int amount = currentPlayer.Territories.Count / 3;
+            Setup = true;
+
+            //Minimum is 3
+            if (amount < 3)
+            {
+                amount = 3;
+            }
+            currentPlayer.GiveInfantry(amount);
+            Debug.Log("Player " + currentPlayer.TurnNumber + " has been given " + amount + " infantry.");
+        }
+    }
     public void EndTurn()
     {
         currentTurnIndex = (currentTurnIndex + 1) % Players.Count;
@@ -255,6 +266,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //Method to check all territories have been claimed, indicates to move to next part of setup
     public bool AllTerritoriesOwned()
     {
         foreach (Territory territory in territories)
@@ -296,7 +308,213 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //Methods for battles
+
+    //Battle method
+    public void Battle(Territory terr)
+    {
+        Debug.Log("Attacking");
+
+        int attackerRoll1 = 0, attackerRoll2 = 0, attackerRoll3 = 0;
+        int defenderRoll1 = 0, defenderRoll2 = 0;
+        List<int> attackersRolls = new List<int>();
+        
+        if (troopsAttacking == 2)
+        {
+            
+            attackerRoll1 = Dice.Roll();
+            Debug.Log("Attacker rolled " + attackerRoll1);
+        }
+        else if(troopsAttacking == 3)
+        {
+
+            int roll1 = Dice.Roll();
+            int roll2 = Dice.Roll();
+            
+            attackerRoll1 = Mathf.Max(roll1, roll2);
+            attackerRoll2 = Mathf.Min(roll2, roll1);
+            Debug.Log("Attacker rolled " + attackerRoll1 + ", " + attackerRoll2);
+        }
+        else if (troopsAttacking == 4)
+        {
+            int roll1 = Dice.Roll();
+            int roll2 = Dice.Roll();
+            int roll3 = Dice.Roll();
+
+            attackersRolls.Add(roll1);
+            attackersRolls.Add(roll2);
+            attackersRolls.Add(roll3);
+
+            attackersRolls.Sort();
+
+            //Order die values highest first
+            attackerRoll1 = attackersRolls[2];
+            attackerRoll2 = attackersRolls[1];
+            attackerRoll3 = attackersRolls[0];
+
+            Debug.Log("Attacker rolled " + attackerRoll1 + ", " + attackerRoll2 + ", " + attackerRoll3);
+
+
+        }
+
+        if(troopsDefending == 1)
+        {
+            defenderRoll1 = Dice.Roll();
+            Debug.Log("Defender rolled " + defenderRoll1);
+            if (attackerRoll1 > defenderRoll1)
+            {
+                terr.Infantry--;
+                Debug.Log("Attack win! " + terr.name + " looses 1 infantry and now has " + terr.Infantry);
+            }
+            else
+            {
+                lastSelectedTerritories[1].Infantry--;
+                Debug.Log("Defence win! " + lastSelectedTerritories[1].name + " looses 1 infantry and now has " + lastSelectedTerritories[1].Infantry);
+            }
+        }
+
+        else if (troopsDefending == 2 && troopsAttacking >= 3)
+        {
+            int roll1 = Dice.Roll();
+            int roll2 = Dice.Roll();
+            defenderRoll1 = Mathf.Max(roll1, roll2);
+            defenderRoll2 = Mathf.Min(roll2, roll1);
+
+            
+            Debug.Log("Defender rolled " + defenderRoll1 + ", " + defenderRoll2);
+            if (attackerRoll1 > defenderRoll1)
+            {
+                terr.Infantry--;
+                Debug.Log("Attack win! " + terr.name + " looses 1 infantry and now has " + terr.Infantry);
+            }
+            else
+            {
+                lastSelectedTerritories[1].Infantry--;
+                Debug.Log("Defence win! " + lastSelectedTerritories[1].name + " looses 1 infantry and now has " + lastSelectedTerritories[1].Infantry);
+            }
+            if (attackerRoll2 > defenderRoll2) { 
+                terr.Infantry--;
+                Debug.Log("Attack win! " + terr.name + " looses 1 infantry and now has " + terr.Infantry);
+            }
+            else
+            {
+                lastSelectedTerritories[1].Infantry--;
+                Debug.Log("Defence win! " + lastSelectedTerritories[1].name + " looses 1 infantry and now has " + lastSelectedTerritories[1].Infantry);
+            }
+
+        }
+        else if (troopsAttacking == 2 && troopsDefending == 2)
+        {
+            int roll1 = Dice.Roll();
+            int roll2 = Dice.Roll();
+            defenderRoll1 = Mathf.Max(roll1, roll2);
+            defenderRoll2 = Mathf.Min(roll2, roll1);
+
+
+            Debug.Log("Defender rolled " + defenderRoll1 + ", " + defenderRoll2);
+            if (attackerRoll1 > defenderRoll1)
+            {
+                terr.Infantry--;
+                Debug.Log("Attack win! " + terr.name + " looses 1 infantry and now has " + terr.Infantry);
+            }
+            else
+            {
+                lastSelectedTerritories[1].Infantry--;
+                Debug.Log("Defence win! " + lastSelectedTerritories[1].name + " looses 1 infantry and now has " + lastSelectedTerritories[1].Infantry);
+            }
+        }
+
+
+       
+
+    }
+
+    //Method to Read how many troops are being used to attack from the user input
+    public void ReadAttackers(string str)
+    {
+        if(str == "2")
+        {
+            troopsAttacking = 2;
+            attackerPrompt.SetActive(false);
+            defenderPrompt.SetActive(true);
+
+        }
+        else if (str == "3")
+        {
+            troopsAttacking = 3;
+            attackerPrompt.SetActive(false);
+            defenderPrompt.SetActive(true);
+        }
+        else if (str == "4")
+        {
+            troopsAttacking = 4;
+            attackerPrompt.SetActive(false);
+            defenderPrompt.SetActive(true);
+        }
+        else
+        {
+            Debug.Log("Must input between 2-4 attackers");
+        }
+    }
+
+    public void ReadDefenders(string str)
+    {
+        if (str == "1")
+        {
+            troopsDefending = 1;
+            defenderPrompt.SetActive(false);
+            Battle(lastSelectedTerritories[0]);
+
+        }
+        else if (str == "2")
+        {
+            troopsDefending = 2;
+            defenderPrompt.SetActive(false);
+            Battle(lastSelectedTerritories[0]);
+
+        }
+        
+        else
+        {
+            Debug.Log("Must input between 1-2 attackers");
+        }
+    }
+
+    //Method to keep track of the last selected territory
+    public void LastSelectedTerritory(Territory territory)
+    {
+        lastSelectedTerritories[1] = lastSelectedTerritories[0];
+        lastSelectedTerritories[0] = territory;
+    }
+
+    //method to start battle
+    //activates attacker prompt screen, which once the user submits will commence the battle
+    public void startBattle(Territory territory)
+    {
+        Player player = Players[currentTurnIndex];
+        LastSelectedTerritory(territory);
+        if (battlePhase == true)
+        {
+            if (territory.Player != player)
+            {
+                attackerPrompt.SetActive(true);
+            }
+            
+            else
+            {
+                Debug.Log("Player can't attack their own territories");
+            }
+        }
+        
+        
+    }
+
+
+
 }
+
+
+//METHOD GRAVE YARD 
 
 //Method to distribute territories to each player on set up
 /*private void DistributeTerritories()
@@ -348,6 +566,25 @@ for (int i = 0; i < territoriesLength; i++)
     }
 }
 
+}*/
+
+/*void EnableTerritoryButtonsForPlayer(Player player)
+{
+    foreach (Territory territory in territories)
+    {
+        // Enable buttons for territories that do not belong to any player
+        // and where the player has adjacent territories
+        if (territory.Player == null && HasAdjacentTerritoryOwnedByPlayer(territory, player))
+        {
+            // Enable buttons for this territory
+            Button territoryButton = territory.GetComponent<Button>();
+            territoryButton.interactable = true;
+
+            // Add an onClick event listener to the button
+            territoryButton.onClick.RemoveAllListeners(); // Remove existing listeners to prevent duplicate calls
+            territoryButton.onClick.AddListener(() => AssignPlayerToTerritory(territory));
+        }
+    }
 }*/
 
 

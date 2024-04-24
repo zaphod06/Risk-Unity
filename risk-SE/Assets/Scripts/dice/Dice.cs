@@ -16,6 +16,7 @@ public class dice : MonoBehaviour
     // Simulate a battle between two players with given troop counts
     public (int, int) Battle(int attackerTroops, int defenderTroops)
     {
+        
         int attackerRoll = Roll();
         int defenderRoll = Roll();
 
