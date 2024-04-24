@@ -40,7 +40,7 @@ public class PlayerCreator : MonoBehaviour
         
         if (amount == 3)
         {
-            player.AssignInfantry(35);
+            player.AssignInfantry(5);
         }
         else if (amount == 4)
         {

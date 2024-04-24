@@ -66,4 +66,9 @@ public class Player : MonoBehaviour
     {
         Infantry = InfantryNo;
     }
+
+    public void GiveInfantry(int amount)
+    {
+        Infantry = Infantry + amount;
+    }
 }

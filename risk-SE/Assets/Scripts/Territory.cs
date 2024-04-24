@@ -15,7 +15,7 @@ public class Territory : MonoBehaviour
     void Start()
     {
         Name = gameObject.name;
-        AdjacentTerritories = new List<Territory>();
+        //AdjacentTerritories = new List<Territory>();
     }
 
     public void AddAdjacentTerritory(Territory territory)
@@ -34,7 +34,16 @@ public class Territory : MonoBehaviour
 
     public void PlaceInfantry()
     {
-        Infantry++;
-        Player.Infantry--;
+        if (Player.Infantry > 0)
+        {
+            Infantry++;
+            Player.Infantry--;
+        }
+        else
+        {
+            Debug.Log("Player " + Player.TurnNumber + " has no more troops to place.");
+
+        }
     }
+
 }

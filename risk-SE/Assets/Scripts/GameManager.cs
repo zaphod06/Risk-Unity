@@ -27,31 +27,10 @@ public class GameManager : MonoBehaviour
     public Canvas canvas;
     public RectTransform[] cardSpaces;
 
+    private bool Setup = false;
 
-    public void DrawCard()
-    {
-        if (deck.Count >= 1)
-        {
-            int randomIndex = Random.Range(0, deck.Count);
-            Card randomCard = deck[randomIndex];
-            for (int i = 0; i < freeCardSpaces.Length; i++)
-            {
-                if (freeCardSpaces[i] == true)
-                {
-                    GameObject cardGO = Instantiate(randomCard.associatedGameObject, canvas.transform);
-                    cardGO.name = randomCard.TerritoryName;
-                  
-                    RectTransform cardRectTransform = cardGO.GetComponent<RectTransform>();
-                    cardRectTransform.anchoredPosition = cardSpaces[i].anchoredPosition;
 
-                    freeCardSpaces[i] = false;
-                    deck.Remove(randomCard);
-
-                    return;
-                }
-            }
-        }
-    }
+    
 
 
 
@@ -96,7 +75,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        
+        Debug.Log("Player " + Players[currentTurnIndex].TurnNumber + "'s turn.");
         ExecuteTurn(Players[currentTurnIndex]);
     } 
 
@@ -134,36 +113,37 @@ public class GameManager : MonoBehaviour
 
     public void AssignPlayerToTerritory(Territory territory)
     {
-        if(territory.Player == null)
+        if (Setup == false)
         {
-            Player player = Players[currentTurnIndex];
-            territory.AssignPlayer(player);
-            // Implement logic to place troops on the territory
-            Debug.Log(player.TurnNumber + " has been assigned to " + territory.Name);
-            player.AddTerritory(territory);
-            territory.PlaceInfantry();
-            EndTurn();
-        }
-        else if (AllTerritoriesOwned() == true && AllTroopsPlaced() == false)
-        {
-            
-            PlaceInfantry(territory);
-        }
-        else if (AllTroopsPlaced() == true)
-        {
-            Debug.Log("Player "+ currentTurnIndex + " attacking " + territory.name);
-        }
-        else
-        {
-            
-            foreach (Territory terr in territories)
+            if (territory.Player == null)
             {
-                if(terr.Player == null){
-                    Debug.Log(terr.name + " still must be claimed");
-                }
+                Player player = Players[currentTurnIndex];
+                territory.AssignPlayer(player);
+                // Implement logic to place troops on the territory
+                Debug.Log(player.TurnNumber + " has been assigned to " + territory.Name);
+                player.AddTerritory(territory);
+                territory.PlaceInfantry();
+                EndTurn();
             }
-            
+            else if (AllTerritoriesOwned() == true && AllTroopsPlaced() == false)
+            {
+
+                SetUpInfantry(territory);
+            }
+            else
+            {
+
+                foreach (Territory terr in territories)
+                {
+                    if (terr.Player == null)
+                    {
+                        Debug.Log(terr.name + " still must be claimed");
+                    }
+                }
+
+            }
         }
+        
         
         
     }
@@ -173,7 +153,7 @@ public class GameManager : MonoBehaviour
         
     }
 
-    public void PlaceInfantry(Territory Terr)
+    public void SetUpInfantry(Territory Terr)
     {
         Player player = Players[currentTurnIndex];
         if (Terr.Player == player) {
@@ -203,14 +183,41 @@ public class GameManager : MonoBehaviour
 
     public void ExecuteTurn(Player currentPlayer)
     {
-        Debug.Log("Player " + currentPlayer.TurnNumber + "'s turn.");
-        //Put in turn actions later
+        
+        if(currentPlayer.Infantry == 0)
+        {
+            int amount = currentPlayer.Territories.Count / 3;
+            Setup = true;
+           
+            currentPlayer.GiveInfantry(amount);
+            Debug.Log("Player " + currentPlayer.TurnNumber + " has been given " + amount + " infantry.");
+            
+        }
+    }
 
-        // Allow the current player to assign armies to territories
-        // For example, you can enable buttons for the territories the player can assign armies to
-        //EnableTerritoryButtonsForPlayer(currentPlayer);
-
-        //EndTurn();
+    public void PlaceInfantry(Territory Terr)
+    {
+        Player player = Players[currentTurnIndex];
+        if(Setup == true)
+        {
+            if (Terr.Player == player && player.Infantry > 0)
+            {
+                Terr.PlaceInfantry();
+                Debug.Log("Player " + player.TurnNumber + " Placing army on territory: " + Terr.Name);
+                
+            }
+            else if(player.Infantry == 0)
+            {
+                Debug.Log("Player has no more troops");
+                
+                
+            }
+            else
+            {
+                Debug.Log("Player " + player.TurnNumber + "Does not own " + Terr.Name);
+            }
+        }
+   
     }
 
     public void EndTurn()
@@ -218,8 +225,34 @@ public class GameManager : MonoBehaviour
         currentTurnIndex = (currentTurnIndex + 1) % Players.Count;
 
         //Execute turn for next player
+        
+        Debug.Log("Player " + Players[currentTurnIndex].TurnNumber + "'s turn.");
         ExecuteTurn(Players[currentTurnIndex]);
+    }
 
+    public void DrawCard()
+    {
+        if (deck.Count >= 1)
+        {
+            int randomIndex = Random.Range(0, deck.Count);
+            Card randomCard = deck[randomIndex];
+            for (int i = 0; i < freeCardSpaces.Length; i++)
+            {
+                if (freeCardSpaces[i] == true)
+                {
+                    GameObject cardGO = Instantiate(randomCard.associatedGameObject, canvas.transform);
+                    cardGO.name = randomCard.TerritoryName;
+
+                    RectTransform cardRectTransform = cardGO.GetComponent<RectTransform>();
+                    cardRectTransform.anchoredPosition = cardSpaces[i].anchoredPosition;
+
+                    freeCardSpaces[i] = false;
+                    deck.Remove(randomCard);
+
+                    return;
+                }
+            }
+        }
     }
 
     public bool AllTerritoriesOwned()
@@ -234,6 +267,7 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
+    //Method to check all troops are placed and game has been setup
     public bool AllTroopsPlaced()
     {
         foreach (Player player in Players)
@@ -243,7 +277,23 @@ public class GameManager : MonoBehaviour
                 return false;
             }
         }
+        Setup = true;
         return true;
+    }
+
+    //Method to check player is allowed to end there turn
+    //Will be linked to end turn button of game
+    public void EndTurnIfAllowed()
+    {
+        Player player = Players[currentTurnIndex];
+        if (player.Infantry == 0)
+        {
+            EndTurn();
+        }
+        else
+        {
+            Debug.Log("Player must finsish placing troops before ending turn");
+        }
     }
 
 }
