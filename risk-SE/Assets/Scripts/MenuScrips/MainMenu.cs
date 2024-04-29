@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
     public string input;
+    public bool AI = false;
     public GameObject Board;
     public GameObject Territories;
 
@@ -27,7 +28,7 @@ public class MainMenu : MonoBehaviour
         }
         else
         {
-            Debug.Log("Must have between 1 to 6 players");
+            Debug.Log("Must have between 2 to 6 players");
         }
     }
 
@@ -69,5 +70,18 @@ public class MainMenu : MonoBehaviour
         }
 
 
+    }
+
+    public void setAI()
+    {
+        if (AI == false)
+        {
+            AI = true;
+        }
+            
+        else
+        {
+            AI = false;
+        }
     }
 }

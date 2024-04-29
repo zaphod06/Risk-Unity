@@ -75,7 +75,7 @@ public class GameManager : MonoBehaviour
     //Method to create Players
     private void CreatePlayers(PlayerCreator playerCreator)
     {
-        if (playerCreator != null)
+        /*if (playerCreator != null)
         {
             for (int i = 0; i < playerCreator.getAmount(); i++)
             {
@@ -85,7 +85,8 @@ public class GameManager : MonoBehaviour
         else 
         {
             Debug.LogError("PlayerCreator instance is null. Players cannot be created.");
-        }
+        }*/
+        Players = playerCreator.createPlayers();
     }
 
     
@@ -229,6 +230,66 @@ public class GameManager : MonoBehaviour
             }
             currentPlayer.GiveInfantry(amount);
             Debug.Log("Player " + currentPlayer.TurnNumber + " has been given " + amount + " infantry.");
+        }
+
+        //Code for the AI player
+        if (currentPlayer.AI == true)
+        {
+            if (Setup == false)
+            {   
+                //What AI player does during set up
+                if (AllTerritoriesOwned() == true)
+                {
+                    foreach(Territory terr in currentPlayer.Territories)
+                    {
+                        SetUpInfantry(terr);
+                        if (Players[currentTurnIndex] != currentPlayer)
+                        {
+                            break;
+
+                        }
+                    }
+                    
+                }
+                else
+                {
+                    foreach(Territory territory in territories)
+                    {
+                        AssignPlayerToTerritory(territory);
+                        if (Players[currentTurnIndex] != currentPlayer)
+                        {
+                            break;
+
+                        }
+                    }
+                   
+                }
+            }
+            //AI player after setuo
+            else if(troopPlacingPhase == true)
+            {
+                int turns = currentPlayer.Infantry;
+                for(int i = 0; i <= turns; i++)
+                {
+                    int randomTerritoryIndex = Random.Range(0, currentPlayer.Territories.Count);
+                    Territory terr = currentPlayer.Territories[randomTerritoryIndex];
+                    PlaceInfantry(terr);
+                }
+                battlePhase = true;
+                //AI player battle 
+                troopsAttacking = 2;
+                lastSelectedTerritories[1] = currentPlayer.Territories[0];
+                lastSelectedTerritories[0] = lastSelectedTerritories[1].AdjacentTerritories[0];
+                if (!currentPlayer.Territories.Contains(lastSelectedTerritories[0]))
+                {
+                    Debug.Log("Player " + currentTurnIndex + " attacking " + lastSelectedTerritories[0].name + " with " + lastSelectedTerritories[1].name);
+                    defenderPrompt.SetActive(true);
+                }
+                
+                
+
+            }
+            
         }
     }
     public void EndTurn()
@@ -426,6 +487,10 @@ public class GameManager : MonoBehaviour
             }
         }
         TakeTerritory(terr);
+        if (Players[currentTurnIndex].AI == true)
+        {
+            EndTurn();
+        }
     }
 
     public void TakeTerritory(Territory terr)
@@ -436,10 +501,10 @@ public class GameManager : MonoBehaviour
             terr.Player.Territories.Remove(terr);
             terr.Player = Players[currentTurnIndex];
             Players[currentTurnIndex].Territories.Add(terr);
-            lastSelectedTerritories[1].Infantry -= troopsAttacking;
-            terr.Infantry += troopsAttacking;
+            lastSelectedTerritories[1].Infantry -= troopsAttacking - 1;
+            terr.Infantry += troopsAttacking - 1;
 
-            Debug.Log(Players[currentTurnIndex] + " has taken " + terr.name);
+            Debug.Log("Player "+ Players[currentTurnIndex].TurnNumber + " has taken " + terr.name);
 
             if (loser.Territories.Count == 0)
             {
@@ -452,34 +517,67 @@ public class GameManager : MonoBehaviour
     //Method to Read how many troops are being used to attack from the user input
     public void ReadAttackers(string str)
     {
-        if(str == "2" && lastSelectedTerritories[1].Infantry > 1)
+        if (lastSelectedTerritories[0].Player.AI == true)
         {
-            troopsAttacking = 2;
-            attackerPrompt.SetActive(false);
-            defenderPrompt.SetActive(true);
+            if (str == "2" && lastSelectedTerritories[1].Infantry > 1)
+            {
+                troopsAttacking = 2;
+                attackerPrompt.SetActive(false);
+                ReadDefenders("1");
 
-        }
-        else if (str == "3" && lastSelectedTerritories[1].Infantry > 2)
-        {
-            troopsAttacking = 3;
-            attackerPrompt.SetActive(false);
-            defenderPrompt.SetActive(true);
-        }
-        else if (str == "4" && lastSelectedTerritories[1].Infantry > 3)
-        {
-            troopsAttacking = 4;
-            attackerPrompt.SetActive(false);
-            defenderPrompt.SetActive(true);
+            }
+            else if (str == "3" && lastSelectedTerritories[1].Infantry > 2)
+            {
+                troopsAttacking = 3;
+                attackerPrompt.SetActive(false);
+                ReadDefenders("1");
+            }
+            else if (str == "4" && lastSelectedTerritories[1].Infantry > 3)
+            {
+                troopsAttacking = 4;
+                attackerPrompt.SetActive(false);
+                ReadDefenders("1");
+            }
+            else
+            {
+                Debug.Log("Must input between 2-4 attackers, or territory must have enough infantry");
+                attackerPrompt.SetActive(false);
+            }
         }
         else
         {
-            Debug.Log("Must input between 2-4 attackers, or territory must have enough infantry");
-            attackerPrompt.SetActive(false);
+            if (str == "2" && lastSelectedTerritories[1].Infantry > 1)
+            {
+                troopsAttacking = 2;
+                attackerPrompt.SetActive(false);
+                defenderPrompt.SetActive(true);
+
+            }
+            else if (str == "3" && lastSelectedTerritories[1].Infantry > 2)
+            {
+                troopsAttacking = 3;
+                attackerPrompt.SetActive(false);
+                defenderPrompt.SetActive(true);
+            }
+            else if (str == "4" && lastSelectedTerritories[1].Infantry > 3)
+            {
+                troopsAttacking = 4;
+                attackerPrompt.SetActive(false);
+                defenderPrompt.SetActive(true);
+            }
+            else
+            {
+                Debug.Log("Must input between 2-4 attackers, or territory must have enough infantry");
+                attackerPrompt.SetActive(false);
+            }
         }
+        
     }
 
     public void ReadDefenders(string str)
     {
+        Debug.Log("Player " + lastSelectedTerritories[0].Player.TurnNumber + " enter amount of defenders");
+    
         if (str == "1" && lastSelectedTerritories[0].Infantry > 0)
         {
             troopsDefending = 1;

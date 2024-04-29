@@ -10,8 +10,10 @@ public class PlayerCreator : MonoBehaviour
     //private PlayerAmount playerAmount;
     
     public GameObject playerPrefab;
-    public int turn = 0;
-    public int amount;
+    public GameObject AIplayerPrefab;
+    public int turn = 1;
+    private int amount;
+    public bool AI;
     public MainMenu mainMenu;
 
     private void Awake()
@@ -20,6 +22,8 @@ public class PlayerCreator : MonoBehaviour
         //playerAmount = (PlayerAmount)FindObjectOfType(typeof(PlayerAmount));
         
         amount = mainMenu.getPlayerAmount();
+        AI = mainMenu.AI;
+
     } 
     void Start()
     {
@@ -38,9 +42,13 @@ public class PlayerCreator : MonoBehaviour
         Player player = playerObject.GetComponent<Player>();
         player.AssignTurn(turn);
         
+        if (amount == 2 && AI == true)
+        {
+            player.AssignInfantry(40);
+        }
         if (amount == 3)
         {
-            player.AssignInfantry(5);
+            player.AssignInfantry(35);
         }
         else if (amount == 4)
         {
@@ -54,27 +62,98 @@ public class PlayerCreator : MonoBehaviour
         {
             player.AssignInfantry(20);
         }
+        if (AI && amount < 6)
+        {
+            player.Infantry = player.Infantry - 5;
+        }
         turn++;
+
         
+        return player;
+    }
+
+    public AiPlayer createAIPlayer()
+    {
+        GameObject AIplayerObject = Instantiate(AIplayerPrefab);
+        AiPlayer player = AIplayerObject.GetComponent<AiPlayer>();
+        player.AssignTurn(turn);
+
+        if (amount == 2)
+        {
+            player.AssignInfantry(40);
+        }
+        if (amount == 3)
+        {
+            player.AssignInfantry(35);
+        }
+        else if (amount == 4)
+        {
+            player.AssignInfantry(30);
+        }
+        else if (amount == 5)
+        {
+            player.AssignInfantry(25);
+        }
+        else if (amount == 6)
+        {
+            player.AssignInfantry(20);
+        }
+
+        if (AI && amount < 6)
+        {
+            player.Infantry = player.Infantry - 5;
+        }
+        turn++;
+
         return player;
     }
 
     public List<Player> createPlayers()
     {
         //Create new list of players
-
-        List<Player> players = new List<Player>();
-
-        //Find amount of players
-        //amount = 5;
-        for (int i = 0; i < amount; i++)
+        if (AI == false)
         {
-            players.Add(createPlayer());
+            List<Player> players = new List<Player>();
+
+            for (int i = 0; i < amount; i++)
+            {
+                players.Add(createPlayer());
+            }
+            return players;
+
         }
+        else
+        {
+            if (amount == 6)
+            {
+                List<Player> players = new List<Player>();
 
-        return players;
+
+                for (int i = 0; i < amount - 1; i++)
+                {
+                    players.Add(createPlayer());
+                }
+
+                players.Add(createAIPlayer()); 
+                return players;
+            }
+            else
+            {
+                List<Player> players = new List<Player>();
+
+
+                for (int i = 0; i < amount; i++)
+                {
+                    players.Add(createPlayer());
+                }
+
+               
+                players.Add(createAIPlayer());
+                return players;
+            }
+            
+        }
     }
-
     public int getAmount()
     {
         

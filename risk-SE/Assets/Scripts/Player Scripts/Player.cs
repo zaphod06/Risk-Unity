@@ -5,11 +5,10 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public List<Territory> Territories = new List<Territory>();
-    public int noTroops;
     public MissionCards mission;
     public Cards[] cards;
-    public string colour;
     public int TurnNumber;
+    public bool AI = false;
 
     public int Infantry = 0;
     public int Cavalry = 0;
