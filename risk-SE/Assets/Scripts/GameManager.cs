@@ -365,6 +365,7 @@ public class GameManager : MonoBehaviour
             {
                 terr.Infantry--;
                 Debug.Log("Attack win! " + terr.name + " looses 1 infantry and now has " + terr.Infantry);
+                
             }
             else
             {
@@ -386,6 +387,7 @@ public class GameManager : MonoBehaviour
             {
                 terr.Infantry--;
                 Debug.Log("Attack win! " + terr.name + " looses 1 infantry and now has " + terr.Infantry);
+
             }
             else
             {
@@ -423,29 +425,47 @@ public class GameManager : MonoBehaviour
                 Debug.Log("Defence win! " + lastSelectedTerritories[1].name + " looses 1 infantry and now has " + lastSelectedTerritories[1].Infantry);
             }
         }
+        TakeTerritory(terr);
+    }
 
+    public void TakeTerritory(Territory terr)
+    {
+        if (terr.Infantry == 0)
+        {
+            Player loser = terr.Player;
+            terr.Player.Territories.Remove(terr);
+            terr.Player = Players[currentTurnIndex];
+            Players[currentTurnIndex].Territories.Add(terr);
+            lastSelectedTerritories[1].Infantry -= troopsAttacking;
+            terr.Infantry += troopsAttacking;
 
-       
+            Debug.Log(Players[currentTurnIndex] + " has taken " + terr.name);
 
+            if (loser.Territories.Count == 0)
+            {
+                Debug.Log("Player " + loser.TurnNumber + " has no more territories and is out of the game. ");
+                Players.Remove(loser);
+            }
+        }
     }
 
     //Method to Read how many troops are being used to attack from the user input
     public void ReadAttackers(string str)
     {
-        if(str == "2")
+        if(str == "2" && lastSelectedTerritories[1].Infantry > 1)
         {
             troopsAttacking = 2;
             attackerPrompt.SetActive(false);
             defenderPrompt.SetActive(true);
 
         }
-        else if (str == "3")
+        else if (str == "3" && lastSelectedTerritories[1].Infantry > 2)
         {
             troopsAttacking = 3;
             attackerPrompt.SetActive(false);
             defenderPrompt.SetActive(true);
         }
-        else if (str == "4")
+        else if (str == "4" && lastSelectedTerritories[1].Infantry > 3)
         {
             troopsAttacking = 4;
             attackerPrompt.SetActive(false);
@@ -453,20 +473,21 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("Must input between 2-4 attackers");
+            Debug.Log("Must input between 2-4 attackers, or territory must have enough infantry");
+            attackerPrompt.SetActive(false);
         }
     }
 
     public void ReadDefenders(string str)
     {
-        if (str == "1")
+        if (str == "1" && lastSelectedTerritories[0].Infantry > 0)
         {
             troopsDefending = 1;
             defenderPrompt.SetActive(false);
             Battle(lastSelectedTerritories[0]);
 
         }
-        else if (str == "2")
+        else if (str == "2" && lastSelectedTerritories[0].Infantry > 1)
         {
             troopsDefending = 2;
             defenderPrompt.SetActive(false);
@@ -476,7 +497,7 @@ public class GameManager : MonoBehaviour
         
         else
         {
-            Debug.Log("Must input between 1-2 attackers");
+            Debug.Log("Must input between 1-2 attackers and territory must have enough infantry to defend");
         }
     }
 
@@ -495,14 +516,22 @@ public class GameManager : MonoBehaviour
         LastSelectedTerritory(territory);
         if (battlePhase == true)
         {
-            if (territory.Player != player)
+            if (territory.Player != player && lastSelectedTerritories[1].AdjacentTerritories.Contains(territory) && lastSelectedTerritories[1].Player == Players[currentTurnIndex] && lastSelectedTerritories[1].Infantry > 1)
             {
                 attackerPrompt.SetActive(true);
             }
             
+            else if (lastSelectedTerritories[1].Player != Players[currentTurnIndex])
+            {
+                Debug.Log("Must select a territory you own to attack with, then select the adjacent territory you want to attack.");
+            }
+            else if (lastSelectedTerritories[1].Infantry == 1 && lastSelectedTerritories[1].Player == Players[currentTurnIndex])
+            {
+                Debug.Log("Must attack with a territroy with more than 1 infantry");
+            }
             else
             {
-                Debug.Log("Player can't attack their own territories");
+                Debug.Log("Player can only attack unonwed adjacent territories.");
             }
         }
         
