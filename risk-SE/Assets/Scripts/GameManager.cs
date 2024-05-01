@@ -28,8 +28,9 @@ public class GameManager : MonoBehaviour
     //Card variables
     public List<Card> deck = new List<Card>();
     public bool[] freeCardSpaces;
-    
-    public Canvas canvas;
+    public List<Card> hand = new List<Card>();
+
+    public GameObject panel;
     public RectTransform[] cardSpaces;
 
     private bool Setup = false;
@@ -45,8 +46,10 @@ public class GameManager : MonoBehaviour
     public GameObject defenderPrompt;
     //Stores last two selected territories to know what territory is attacking and defending
     private Territory[] lastSelectedTerritories = new Territory[2];
-    
 
+    //Setting Hand GameObject
+    [SerializeField] GameObject HandMenu0;
+    
 
 
     private void Awake()
@@ -60,6 +63,7 @@ public class GameManager : MonoBehaviour
         
         //Initialise the deck
         deck.AddRange(CardData.cardList);
+        
         //Set up game
         SetUpGame(playerCreator);
         
@@ -297,36 +301,45 @@ public class GameManager : MonoBehaviour
         currentTurnIndex = (currentTurnIndex + 1) % Players.Count;
 
         //Execute turn for next player
-        
+        DrawCard(Players[currentTurnIndex]);
         Debug.Log("Player " + Players[currentTurnIndex].TurnNumber + "'s turn.");
         ExecuteTurn(Players[currentTurnIndex]);
     }
+    //Trades cards of certain types
+    public void TradingCavalry()
+    {
+        Players[currentTurnIndex].TradeCard("Cavalry");
 
-    public void DrawCard()
+    }
+    public void TradingArtillery()
+    {
+        Players[currentTurnIndex].TradeCard("Artillery");
+
+    }
+    public void TradingInfantry()
+    {
+        Players[currentTurnIndex].TradeCard("Infantry");
+
+    }
+    public void TradingWildCard()
+    {
+        Players[currentTurnIndex].TradeCard("WildCard");
+    }
+    //Method draws card from main deck and places it in player card list/hand
+    public void DrawCard(Player currentPlayer)
     {
         if (deck.Count >= 1)
-        {
+        {   
+            
             int randomIndex = Random.Range(0, deck.Count);
             Card randomCard = deck[randomIndex];
-            for (int i = 0; i < freeCardSpaces.Length; i++)
-            {
-                if (freeCardSpaces[i] == true)
-                {
-                    GameObject cardGO = Instantiate(randomCard.associatedGameObject, canvas.transform);
-                    cardGO.name = randomCard.TerritoryName;
-
-                    RectTransform cardRectTransform = cardGO.GetComponent<RectTransform>();
-                    cardRectTransform.anchoredPosition = cardSpaces[i].anchoredPosition;
-
-                    freeCardSpaces[i] = false;
-                    deck.Remove(randomCard);
-
-                    return;
-                }
-            }
+            deck.Remove(randomCard);
+            currentPlayer.AddCard(randomCard);
+            Debug.Log("The card " + randomCard.TerritoryName + " has been placed in Player" + currentPlayer.TurnNumber + "'s Hand");
+         
         }
     }
-
+ 
     //Method to check all territories have been claimed, indicates to move to next part of setup
     public bool AllTerritoriesOwned()
     {
@@ -368,6 +381,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("Player must finsish placing troops before ending turn");
         }
     }
+
 
     //Methods for battles
 
@@ -505,7 +519,7 @@ public class GameManager : MonoBehaviour
             terr.Infantry += troopsAttacking - 1;
 
             Debug.Log("Player "+ Players[currentTurnIndex].TurnNumber + " has taken " + terr.name);
-
+            DrawCard(Players[currentTurnIndex]);
             if (loser.Territories.Count == 0)
             {
                 Debug.Log("Player " + loser.TurnNumber + " has no more territories and is out of the game. ");
@@ -635,9 +649,9 @@ public class GameManager : MonoBehaviour
         
         
     }
+    
 
-
-
+   
 }
 
 
@@ -713,5 +727,80 @@ for (int i = 0; i < territoriesLength; i++)
         }
     }
 }*/
+// Making a visual menu for players hand
+/** public void OpenHand()
+{
+    if (currentTurnIndex == 0)
+    {
+        HandMenu0.SetActive(true);
+        //   GenerateHand();
+    }
+    else if (currentTurnIndex == 1)
+    {
+        HandMenu0.SetActive(true);
+    }
+    else if (currentTurnIndex == 2)
+    {
+        HandMenu0.SetActive(true);
+    }
+    else if (currentTurnIndex == 3)
+    {
+        HandMenu0.SetActive(true);
+    }
+    else if (currentTurnIndex == 4)
+    {
+        HandMenu0.SetActive(true);
+    }
+    else
+    {
+        HandMenu0.SetActive(true);
+    }
 
+} **/
+/**   public void GenerateHand()
+    {
+        hand.AddRange(Players[currentTurnIndex].cards);
+        for (int i = 0; i < freeCardSpaces.Length; i++)
+        {
+            Card handCard = hand[i];
+            if (freeCardSpaces[i] == true)
+            {
+                GameObject cardGO = Instantiate(handCard.associatedGameObject, panel.transform);
+                cardGO.name = handCard.TerritoryName;
 
+                RectTransform cardRectTransform = cardGO.GetComponent<RectTransform>();
+                cardRectTransform.anchoredPosition = cardSpaces[i].anchoredPosition;
+
+                freeCardSpaces[i] = false;
+               
+
+                return;
+            }
+        }
+        
+    }**/
+// This code was to make visual game object cards appear 
+/**   for (int i=0; i < currentPlayer.Territories.Count; i++)
+            {
+                if (randomCard.TerritoryName == currentPlayer.Territories[i].name)
+                {
+                    currentPlayer.GiveInfantry(2);
+                    Debug.Log("You own both a terrtitory and it's card, +2 Infantry!");
+                }
+            }
+            /**  for (int i = 0; i < freeCardSpaces.Length; i++)
+              {
+                  if (freeCardSpaces[i] == true)
+                  {
+                      GameObject cardGO = Instantiate(randomCard.associatedGameObject, canvas.transform);
+                      cardGO.name = randomCard.TerritoryName;
+
+                      RectTransform cardRectTransform = cardGO.GetComponent<RectTransform>();
+                      cardRectTransform.anchoredPosition = cardSpaces[i].anchoredPosition;
+
+                      freeCardSpaces[i] = false;
+                      deck.Remove(randomCard);
+
+                      return;
+                  }
+              } **/

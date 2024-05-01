@@ -14,9 +14,10 @@ public class CardData : MonoBehaviour
 
     void Awake()
     {
-        
-        List<string> territoryNames = new List<string> { "East Africa", "Venezuala", "Brazil", "Greenland", "Iceland", "Kamchatka", "Peru","Eastern Canada", "Middle East", "New Guinea", "South Africa", "Madagascar", "Western United States", "Scandinavia", "Alberta", "North West", "Great Britain", "Eastern United States", "Central America", "Northern Europe", "Western Europe", "Southern Europe", "North Africa", "Siberia", "Mongolia", "Japan", "Ural", "South East Asia", "Afghanistan", "Indonesia", "Irkutsk", "Eastern Australia", "Western Australia", "Russia", "Ontario", "Argentina", "Ukraine", "Siam", "Quebec", "Congo"};
-        List<string> troopTypes = new List<string> { "Infantry", "Infantry", "Artillery", "Cavalry", "Infantry", "Infantry", "Infantry", "Infantry", "Cavalry", "Infantry", "Infantry", "Artillery", "Cavalry", "Artillery", "Cavalry", "Cavalry", "Artillery", "Artillery", "Artillery", "Artillery", "Artillery", "Artillery", "Artillery", "Cavalry", "Cavalry", "Infantry", "Artillery", "Cavalry", "Cavalry", "Infantry", "Cavalry", "Artillery", "Cavalry", "Artillery", "Artillery", "Cavalry", "Cavalry", "Infantry", "Infantry", "Cavalry", "Artillery", "Artillery"  };
+
+        List<string> territoryNames = new List<string> { "EastAfrica", "Venezuela", "Brazil", "Greenland", "Iceland", "Kamchatka", "Peru", "EasternCanada", "MiddleEast", "NewGuinea", "SouthAfrica", "Madagascar", "WesternUnitedStates", "Scandinavia", "Alberta", "NorthWest", "GreatBritain", "EasternUnitedStates", "CentralAmerica", "NorthernEurope", "WesternEurope", "SouthernEurope", "NorthAfrica", "Siberia", "Mongolia", "Japan", "Ural", "SouthEastAsia", "Afghanistan", "Indonesia", "Irkutsk", "EasternAustralia", "WesternAustralia", "Russia", "Ontario", "Argentina", "Ukraine", "Siam", "Quebec", "Congo", "SouthAmerica", "Australia" };
+;
+        List<string> troopTypes = new List<string> { "Infantry", "Cavalry", "Artillery", "Infantry", "Cavalry", "Artillery", "Infantry", "Cavalry", "Artillery", "Infantry", "Cavalry", "Artillery", "Infantry", "Cavalry", "Artillery", "Infantry", "Cavalry", "Artillery", "Infantry", "Cavalry", "Artillery", "Infantry", "Cavalry", "Artillery", "Infantry", "Cavalry", "Artillery", "Infantry", "Cavalry", "Artillery", "Infantry", "Cavalry", "Artillery", "Infantry", "Cavalry", "Artillery", "Infantry", "Cavalry", "Artillery", "Infantry", "Cavalry", "Artillery" };
        
         for (int i = 0; i < territoryNames.Count; i++)
         {

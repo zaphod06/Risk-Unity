@@ -6,15 +6,21 @@ public class Player : MonoBehaviour
 {
     public List<Territory> Territories = new List<Territory>();
     public MissionCards mission;
-    public Cards[] cards;
+    public List<Card> cards = new List<Card>();
     public int TurnNumber;
     public bool AI = false;
+    int CardNumber = 0;
+    List<Card> TradingCards = new List<Card>();
+    int set = 2;
+
+    
+    
 
     public int Infantry = 0;
     public int Cavalry = 0;
     public int Artillery = 0;
 
-
+   
 
     // Start is called before the first frame update
 
@@ -70,4 +76,90 @@ public class Player : MonoBehaviour
     {
         Infantry = Infantry + amount;
     }
+    public void AddCard(Card card)
+    {
+        cards.Add(card);
+    }
+    //Trades cards that have at least 3 of the same type of troop
+    public void TradeCard(string troopType)
+    {
+        CardNumber = 0;
+        foreach (Card card in cards)
+        {
+            if (card.TroopType == troopType)
+            {
+                TradingCards.Add(card);
+                CardNumber = CardNumber + 1;
+                if(CardNumber >= 3)
+                {
+                    break; 
+                }
+            }
+
+        }
+        if (CardNumber >= 3)
+        {
+            List<Card> CardsRemoved = new List<Card>();
+            foreach (Card card in TradingCards)
+            {
+                CardsRemoved.Add(card);
+            }
+
+            foreach (Card cardToRemove in CardsRemoved)
+            {
+                cards.Remove(cardToRemove);
+                TradingCards.Remove(cardToRemove);
+            }
+
+            Debug.Log("Trade worked! All " + troopType + " cards have been traded.");
+            if (set < 12)
+            {
+                
+                set = set + 2;
+                GiveInfantry(set);
+            }
+            else if (set == 12){
+                set = set + 3;
+                GiveInfantry(set);
+            }
+            else
+            {
+                set = set + 5;
+                GiveInfantry(set);
+            }
+        }
+        else
+        {
+            Debug.Log("Trade did not work!");
+        }            
+    }
+    //Trades WildCards
+    public void TradeWildCard(string troopType)
+    {
+        List<Card> cardsToRemove = new List<Card>();
+        foreach (Card card in cards)
+        {
+            if (card.TroopType == troopType)
+            {
+                cardsToRemove.Add(card);
+            }
+        }
+
+        foreach (Card cardToRemove in cardsToRemove)
+        {
+            cards.Remove(cardToRemove);
+        }
+
+        Debug.Log("Trade worked! The " + troopType + " has been traded alongside:");
+
+        for (int i = 0; i < 2; i++)
+        {
+            int randomIndex = Random.Range(0, cards.Count);
+            Debug.Log("The " + cards[randomIndex].TroopType + " Card");
+            cards.RemoveAt(randomIndex);
+        }
+    }
+
+
 }
+
