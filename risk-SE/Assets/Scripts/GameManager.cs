@@ -525,6 +525,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log("Player " + loser.TurnNumber + " has no more territories and is out of the game. ");
                 Players.Remove(loser);
             }
+            
         }
     }
 

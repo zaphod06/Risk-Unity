@@ -48,7 +48,7 @@ public class PlayerCreator : MonoBehaviour
         }
         if (amount == 3)
         {
-            player.AssignInfantry(35);
+            player.AssignInfantry(10);
         }
         else if (amount == 4)
         {
@@ -84,7 +84,7 @@ public class PlayerCreator : MonoBehaviour
         }
         if (amount == 3)
         {
-            player.AssignInfantry(35);
+            player.AssignInfantry(10);
         }
         else if (amount == 4)
         {
